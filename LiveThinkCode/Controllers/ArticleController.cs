@@ -1,27 +1,50 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using LiveThinkCode.Data;
+using LiveThinkCode.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace LiveThinkCode.Controllers
 {
     public class ArticleController : Controller
     {
+
+        private ApplicationDbContext _db;
+
+        public ArticleController(ApplicationDbContext db)
+        {
+            _db = db;
+        }
+
         // GET: ArticleController
         public ActionResult Index()
         {
-            return View();
+            var articles = _db.Articles.ToList();
+            return View(articles);
         }
 
-        // GET: ArticleController/Details/5
-        public ActionResult Details(int id)
+        // GET: ArticleController/Details/test
+        public ActionResult Details(string id)
         {
-            return View();
+            if (id is null)
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
+
+            Article article = _db.Articles.First(x => x.Title == id);
+
+
+            return View(article);
         }
 
         // GET: ArticleController/Create
+        [Authorize(Roles = "Admin")]
         public ActionResult Create()
         {
             return View();
@@ -30,8 +53,22 @@ namespace LiveThinkCode.Controllers
         // POST: ArticleController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        [Authorize(Roles = "Admin")]
+        public ActionResult Create([FromForm] Article article)
         {
+            //var model = new Article();
+            //var task = TryUpdateModelAsync<Article>(model);
+
+            //task.Wait();
+            //var result = task.Result;
+            article.CreationDate = DateTime.Now;
+            article.ModificationDate = DateTime.Now;
+            if(article != null)
+            {
+                _db.Articles.Add(article);
+                _db.SaveChanges();
+            }
+
             try
             {
                 return RedirectToAction(nameof(Index));
@@ -43,16 +80,21 @@ namespace LiveThinkCode.Controllers
         }
 
         // GET: ArticleController/Edit/5
-        public ActionResult Edit(int id)
+        [Authorize(Roles = "Admin")]
+        public ActionResult Edit(string id)
         {
-            return View();
+            Article article = _db.Articles.First(x => x.Title == id);
+            return View(article);
         }
 
         // POST: ArticleController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        [Authorize(Roles = "Admin")]
+        public ActionResult Edit(string id, IFormCollection collection)
         {
+            Article article = _db.Articles.First(x => x.Title == id);
+            
             try
             {
                 return RedirectToAction(nameof(Index));
@@ -64,16 +106,23 @@ namespace LiveThinkCode.Controllers
         }
 
         // GET: ArticleController/Delete/5
-        public ActionResult Delete(int id)
+        [Authorize(Roles = "Admin")]
+        public ActionResult Delete(string id)
         {
-            return View();
+            Article article = _db.Articles.First(x => x.Title == id);
+            
+            return View(article);
         }
 
         // POST: ArticleController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        [Authorize(Roles = "Admin")]
+        public ActionResult Delete(string id, IFormCollection collection)
         {
+            Article article = _db.Articles.First(x => x.Title == id);
+            _db.Articles.Remove(article);
+            _db.SaveChanges();
             try
             {
                 return RedirectToAction(nameof(Index));

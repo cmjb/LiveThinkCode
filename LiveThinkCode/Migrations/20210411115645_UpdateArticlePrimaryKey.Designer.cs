@@ -3,14 +3,16 @@ using System;
 using LiveThinkCode.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace LiveThinkCode.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210411115645_UpdateArticlePrimaryKey")]
+    partial class UpdateArticlePrimaryKey
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -138,44 +140,6 @@ namespace LiveThinkCode.Migrations
                     b.ToTable("Articles");
                 });
 
-            modelBuilder.Entity("LiveThinkCode.Models.Category", b =>
-                {
-                    b.Property<string>("CategoryId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
-
-                    b.Property<string>("ArticleId")
-                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
-
-                    b.Property<string>("Title")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.HasKey("CategoryId");
-
-                    b.HasIndex("ArticleId");
-
-                    b.ToTable("Category");
-                });
-
-            modelBuilder.Entity("LiveThinkCode.Models.Tag", b =>
-                {
-                    b.Property<string>("TagId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
-
-                    b.Property<string>("ArticleId")
-                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.HasKey("TagId");
-
-                    b.HasIndex("ArticleId");
-
-                    b.ToTable("Tag");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")
@@ -291,20 +255,6 @@ namespace LiveThinkCode.Migrations
                     b.Navigation("Author");
                 });
 
-            modelBuilder.Entity("LiveThinkCode.Models.Category", b =>
-                {
-                    b.HasOne("LiveThinkCode.Models.Article", null)
-                        .WithMany("Categories")
-                        .HasForeignKey("ArticleId");
-                });
-
-            modelBuilder.Entity("LiveThinkCode.Models.Tag", b =>
-                {
-                    b.HasOne("LiveThinkCode.Models.Article", null)
-                        .WithMany("Tags")
-                        .HasForeignKey("ArticleId");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("LiveThinkCode.Models.ApplicationRole", null)
@@ -354,13 +304,6 @@ namespace LiveThinkCode.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("LiveThinkCode.Models.Article", b =>
-                {
-                    b.Navigation("Categories");
-
-                    b.Navigation("Tags");
                 });
 #pragma warning restore 612, 618
         }

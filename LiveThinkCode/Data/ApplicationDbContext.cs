@@ -18,6 +18,17 @@ namespace LiveThinkCode.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Article>()
+            .Property(f => f.ArticleId)
+            .ValueGeneratedOnAdd();
+            modelBuilder.Entity<Tag>()
+            .Property(f => f.TagId)
+            .ValueGeneratedOnAdd();
+            modelBuilder.Entity<Category>()
+            .Property(f => f.CategoryId)
+            .ValueGeneratedOnAdd();
         }
+
+        public DbSet<Article> Articles { get; set; }
     }
 }
