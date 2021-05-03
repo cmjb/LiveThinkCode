@@ -16,17 +16,13 @@ namespace LiveThinkCode.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly RoleManager<ApplicationRole> _roleManager;
-        private readonly UserManager<ApplicationUser> _userManager;
 
         private readonly ApplicationDbContext _db;
 
-        public HomeController(ApplicationDbContext db, ILogger<HomeController> logger, RoleManager<ApplicationRole> roleManager, UserManager<ApplicationUser> userManager)
+        public HomeController(ApplicationDbContext db, ILogger<HomeController> logger)
         {
             _db = db;
             _logger = logger;
-            _roleManager = roleManager;
-            _userManager = userManager;
         }
 
         public IActionResult Index(int? pageNumber)
@@ -70,22 +66,6 @@ namespace LiveThinkCode.Controllers
         [Authorize]
         public IActionResult AddAdmin()
         {
-            var userPrincipal = this.User;
-            var task = Task.Run(async () =>
-            {
-               var user = await _userManager.GetUserAsync(userPrincipal);
-               bool userRoleExists = await _roleManager.RoleExistsAsync("Admin");
-
-               if (!userRoleExists)
-               {
-                   var roleResult = await _roleManager.CreateAsync(new ApplicationRole { Name = "Admin" });
-               }
-
-               var roleresult = await _userManager.AddToRoleAsync(user, "Admin");
-               _logger.LogInformation("User added to role 'Admins'.");
-            });
-
-            task.Wait();
            
             return View();
         }
