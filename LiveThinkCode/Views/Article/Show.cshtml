@@ -40,6 +40,14 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.ModificationDate)
         </dd>
+        <dd class="col-sm-10">
+            
+            @foreach (var item2 in Model.Tags)
+            {
+                <p>@item2.Name</p>
+            }
+           
+        </dd>
     </dl>
 </div>
 <div>

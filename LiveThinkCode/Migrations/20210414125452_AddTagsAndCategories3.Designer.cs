@@ -3,34 +3,21 @@ using System;
 using LiveThinkCode.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace LiveThinkCode.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210414125452_AddTagsAndCategories3")]
+    partial class AddTagsAndCategories3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 64)
                 .HasAnnotation("ProductVersion", "5.0.5");
-
-            modelBuilder.Entity("ArticleCategory", b =>
-                {
-                    b.Property<string>("ArticlesArticleId")
-                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
-
-                    b.Property<string>("CategoriesCategoryId")
-                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
-
-                    b.HasKey("ArticlesArticleId", "CategoriesCategoryId");
-
-                    b.HasIndex("CategoriesCategoryId");
-
-                    b.ToTable("ArticleCategory");
-                });
 
             modelBuilder.Entity("ArticleTag", b =>
                 {
@@ -143,9 +130,6 @@ namespace LiveThinkCode.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
-                    b.Property<bool>("Active")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<string>("AuthorId")
                         .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
@@ -159,9 +143,6 @@ namespace LiveThinkCode.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Slug")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<string>("Summary")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<string>("Title")
@@ -180,10 +161,15 @@ namespace LiveThinkCode.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
+                    b.Property<string>("ArticleId")
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
                     b.Property<string>("Title")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.HasKey("CategoryId");
+
+                    b.HasIndex("ArticleId");
 
                     b.ToTable("Categories");
                 });
@@ -308,21 +294,6 @@ namespace LiveThinkCode.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("ArticleCategory", b =>
-                {
-                    b.HasOne("LiveThinkCode.Models.Article", null)
-                        .WithMany()
-                        .HasForeignKey("ArticlesArticleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("LiveThinkCode.Models.Category", null)
-                        .WithMany()
-                        .HasForeignKey("CategoriesCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("ArticleTag", b =>
                 {
                     b.HasOne("LiveThinkCode.Models.Article", null)
@@ -345,6 +316,13 @@ namespace LiveThinkCode.Migrations
                         .HasForeignKey("AuthorId");
 
                     b.Navigation("Author");
+                });
+
+            modelBuilder.Entity("LiveThinkCode.Models.Category", b =>
+                {
+                    b.HasOne("LiveThinkCode.Models.Article", null)
+                        .WithMany("Categories")
+                        .HasForeignKey("ArticleId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -396,6 +374,11 @@ namespace LiveThinkCode.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("LiveThinkCode.Models.Article", b =>
+                {
+                    b.Navigation("Categories");
                 });
 #pragma warning restore 612, 618
         }

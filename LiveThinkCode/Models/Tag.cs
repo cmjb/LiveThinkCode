@@ -11,5 +11,6 @@ namespace LiveThinkCode.Models
         [Key]
         public string TagId { get; set; }
         public string Name { get; set; }
+        public ICollection<Article> Articles { get; set; }
     }
 }

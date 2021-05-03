@@ -1,4 +1,5 @@
-﻿using LiveThinkCode.Models;
+﻿using LiveThinkCode.Data;
+using LiveThinkCode.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using LiveThinkCode.Controllers;
 
 namespace LiveThinkCode.Controllers
 {
@@ -17,19 +19,50 @@ namespace LiveThinkCode.Controllers
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public HomeController(ILogger<HomeController> logger, RoleManager<ApplicationRole> roleManager, UserManager<ApplicationUser> userManager)
+        private readonly ApplicationDbContext _db;
+
+        public HomeController(ApplicationDbContext db, ILogger<HomeController> logger, RoleManager<ApplicationRole> roleManager, UserManager<ApplicationUser> userManager)
         {
+            _db = db;
             _logger = logger;
             _roleManager = roleManager;
             _userManager = userManager;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int? pageNumber)
+        {
+            _logger.LogInformation("page number {nom}", pageNumber);
+            int pageSize = 3;
+            int page = (pageNumber ?? 1);
+            var articles = _db.Articles.Where(x => x.Active == true).OrderByDescending(s => s.CreationDate);
+            /*
+            foreach (var article in articles)
+            {
+                IQueryable<Tag> tags = _db.Tags.Where(x => x.Articles.Contains(article));
+                IQueryable<Category> categories = _db.Categories.Where(x => x.Articles.Contains(article));
+                foreach (var tag in tags)
+                {
+                    _logger.LogInformation("Tag name {tag}", tag.Name);
+                }
+
+                article.Tags = tags.ToList();
+                foreach (var tag in article.Tags)
+                {
+                    _logger.LogInformation("Tag name {tag}", tag.Name);
+                }
+
+                article.Categories = categories.ToList();
+            }*/
+
+            return View(PaginatedList<Article>.CreateAsync(articles, page, pageSize).Result);
+        }
+
+        public IActionResult Privacy()
         {
             return View();
         }
 
-        public IActionResult Privacy()
+        public IActionResult About()
         {
             return View();
         }
@@ -61,6 +94,12 @@ namespace LiveThinkCode.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        public List<Article> GetRandomArticles()
+        {
+            IQueryable<Article> articles = _db.Articles.OrderBy(r => Guid.NewGuid()).Take(5);
+            return articles.ToList();
         }
     }
 }

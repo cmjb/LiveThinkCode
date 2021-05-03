@@ -27,8 +27,14 @@ namespace LiveThinkCode.Data
             modelBuilder.Entity<Category>()
             .Property(f => f.CategoryId)
             .ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<Article>().HasMany(a => a.Tags).WithMany(t => t.Articles);
+            modelBuilder.Entity<Article>().HasMany(a => a.Categories).WithMany(c => c.Articles);
         }
 
         public DbSet<Article> Articles { get; set; }
+        public DbSet<Tag> Tags { get; set; }
+        public DbSet<Category> Categories { get; set; }
+
     }
 }

@@ -1,27 +1,45 @@
 ﻿@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+
+
 *@
 @{
+
 }
+<script>
+    $.ajax('/Article/GetRandomArticles/')
+        .done((data) => {
+            let articleListElem = $('#recommended-articles');
+            let articleListHtml = "";
+            data.forEach((article) => {
+                articleListHtml += '<li><p class="mb-0"><a href="/Article/Show/' + article.title + '">' + article.title + '</a></p></li>';
+            });
+            console.log(articleListHtml);
+            articleListElem.html(articleListHtml);
+        });
+    $.ajax('/Tag/GetRandomTags/')
+        .done((data) => {
+            let tagListElem = $('#recommended-tags');
+            let tagListHtml = "";
+            data.forEach((tag) => {
+                tagListHtml += '<li><p class="mb-0"><a href="/Article/ArticlesByTag/' + tag.name + '">' + tag.name + '</a></p></li>';
+            });
+            console.log(tagListHtml);
+            tagListElem.html(tagListHtml);
+        })
+</script>
 <div class="col-md-2">
     <div class="p-4 mb-3 bg-light rounded">
         <h4 class="roboto">Recommended Posts</h4>
-        <ul>
-            <li><p class="mb-0"><a href="#"> Recommended post.</a></p></li>
-            <li><p class="mb-0"><a href="#"> Recommended post.</a></p></li>
-            <li><p class="mb-0"><a href="#"> Recommended post.</a></p></li>
-            <li><p class="mb-0"><a href="#"> Recommended post.</a></p></li>
-            <li><p class="mb-0"><a href="#"> Recommended post.</a></p></li>
+        <ul id="recommended-articles">
         </ul>
 
     </div>
-
     <div class="p-4">
         <h4 class="roboto">Tags</h4>
-        <ol class="list-unstyled mb-0">
+        <ol class="list-unstyled mb-0" id="recommended-tags">
+
             <li><a href="#">ASP.NET</a></li>
-            <li><a href="#">Kubernetes</a></li>
-            <li><a href="#">Minikube</a></li>
         </ol>
     </div>
 

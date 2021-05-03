@@ -9,7 +9,7 @@
 <h4>Article</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-8">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
@@ -18,21 +18,18 @@
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Content" class="control-label"></label>
-                <input id='content-text-box' asp-for="Content" class="form-control" />
-                <span asp-validation-for="Content" class="text-danger"></span>
+                <label asp-for="Summary" class="control-label"></label>
+                <textarea id='summary-text-box' asp-for="Summary" class="form-control" rows="50" cols="50" style="width:100px;height:100px;"></textarea>
+                <span asp-validation-for="Summary" class="text-danger"></span>
                 <script>
                     ClassicEditor
-                        .create(document.querySelector('#content-text-box'), {
+                        .create(document.querySelector('#summary-text-box'), {
                             extraPlugins: [MyCustomUploadAdapterPlugin]
                         })
                         .then(editor => {
+                            editor.config.height = '500px';
                             editor.model.document.on('change', () => {
-                                console.log('The Document has changed!');
-                                //$("#content-text-box").html(editor.getData());
-                                $("#content-text-box").val(editor.getData());
-                                console.log($("#content-text-box").val());
-                                console.log(editor.getData());
+                                $("#summary-text-box").val(editor.getData());
                             });
                         })
                         .catch(error => {
@@ -41,18 +38,137 @@
                 </script>
             </div>
             <div class="form-group">
+                <label asp-for="Content" class="control-label"></label>
+                <textarea id='content-text-box' asp-for="Content" class="form-control" rows="50" cols="50" style="width:100px;height:100px;"></textarea>
+                <span asp-validation-for="Content" class="text-danger"></span>
+                <script>
+                    ClassicEditor
+                        .create(document.querySelector('#content-text-box'), {
+                            extraPlugins: [MyCustomUploadAdapterPlugin]
+                        })
+                        .then(editor => {
+                            editor.config.height = '500px';
+                            editor.model.document.on('change', () => {
+                                $("#content-text-box").val(editor.getData());
+                            });
+                        })
+                        .catch(error => {
+                            console.error(error);
+                        });
+                </script>
+            </div>
+            <div class="form-group">
+                <label asp-for="Active" class="control-label"></label>
+                <input asp-for="Active" type="checkbox" />
+                <span asp-validation-for="Active" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="Slug" class="control-label"></label>
                 <input asp-for="Slug" class="form-control" />
                 <span asp-validation-for="Slug" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Tags" class="control-label"></label>
-                <input asp-for="Tags" class="form-control" />
+                <input asp-for="Tags" id="tags-control" class="form-control" />
                 <span asp-validation-for="Tags" class="text-danger"></span>
+                <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+                <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+
+                <script>
+                    $(function () {
+                        function split(val) {
+                            return val.split(/,\s*/);
+                        }
+                        function extractLast(term) {
+                            return split(term).pop();
+                        }
+
+                        $("#tags-control")
+                            // don't navigate away from the field on tab when selecting an item
+                            .on("keydown", function (event) {
+                                if (event.keyCode === $.ui.keyCode.TAB &&
+                                    $(this).autocomplete("instance").menu.active) {
+                                    event.preventDefault();
+                                }
+                            })
+                            .autocomplete({
+                                source: function (request, response) {
+                                    $.getJSON("/Tag/Search/", {
+                                        term: extractLast(request.term)
+                                    }, response);
+                                },
+                                search: function () {
+                                    var term = extractLast(this.value);
+                                    if (term.length < 2) {
+                                        return false;
+                                    }
+                                },
+                                focus: function () {
+                                    return false;
+                                },
+                                select: function (event, ui) {
+                                    var terms = split(this.value);
+                                    terms.pop();
+                                    terms.push(ui.item.value);
+                                    terms.push("");
+                                    this.value = terms.join(", ");
+                                    return false;
+                                }
+                            });
+                    });
+                </script>
             </div>
             <div class="form-group">
                 <label asp-for="Categories" class="control-label"></label>
-                <input asp-for="Categories" class="form-control" />
+                <input asp-for="Categories" id="categories-control" class="form-control" />
+                <script>
+                    $(function () {
+                        function split(val) {
+                            return val.split(/,\s*/);
+                        }
+                        function extractLast(term) {
+                            return split(term).pop();
+                        }
+
+                        $("#categories-control")
+                            // don't navigate away from the field on tab when selecting an item
+                            .on("keydown", function (event) {
+                                if (event.keyCode === $.ui.keyCode.TAB &&
+                                    $(this).autocomplete("instance").menu.active) {
+                                    event.preventDefault();
+                                }
+                            })
+                            .autocomplete({
+                                source: function (request, response) {
+                                    $.getJSON("/Category/Search/", {
+                                        term: extractLast(request.term)
+                                    }, response);
+                                },
+                                search: function () {
+                                    // custom minLength
+                                    var term = extractLast(this.value);
+                                    if (term.length < 2) {
+                                        return false;
+                                    }
+                                },
+                                focus: function () {
+                                    // prevent value inserted on focus
+                                    return false;
+                                },
+                                select: function (event, ui) {
+                                    var terms = split(this.value);
+                                    // remove the current input
+                                    terms.pop();
+                                    // add the selected item
+                                    terms.push(ui.item.value);
+                                    // add placeholder to get the comma-and-space at the end
+                                    terms.push("");
+                                    this.value = terms.join(", ");
+                                    return false;
+                                }
+                            });
+                    });
+                </script>
                 <span asp-validation-for="Categories" class="text-danger"></span>
             </div>
             <div class="form-group">

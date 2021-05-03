@@ -92,22 +92,3 @@ function MyCustomUploadAdapterPlugin(editor) {
         return new MyUploadAdapter(loader);
     };
 }
-
-/*
-DecoupledEditor.create(document.querySelector('#desEditor'), {
-    extraPlugins: [MyCustomUploadAdapterPlugin]
-})
-    .then(editor => {
-        const toolbarContainer = document.querySelector('#toolbar-container');
-
-        toolbarContainer.appendChild(editor.ui.view.toolbar.element);
-    })
-    .catch(error => {
-        console.error(error);
-    });
-
-document.getElementById("btnSubmitKey").addEventListener("click", (e) => {
-    const richText = document.getElementById('desEditor').innerHTML;
-
-    document.getElementById('Description').value = richText;
-});*/

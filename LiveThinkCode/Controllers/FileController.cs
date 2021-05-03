@@ -12,7 +12,7 @@ namespace LiveThinkCode.Controllers
 {
     public class FileController : Controller
     {
-        private IWebHostEnvironment _environment;
+        private readonly IWebHostEnvironment _environment;
         public FileController(IWebHostEnvironment environment)
         {
             _environment = environment;
@@ -25,38 +25,9 @@ namespace LiveThinkCode.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public JsonResult Upload(IFormFile file)
+        public JsonResult Upload()
         {
             var uploads = Path.Combine(_environment.WebRootPath, "assets");
-
-
-
-            /*foreach (var file in files)
-            {
-                if (file.Length > 0)
-                {
-
-                }
-            }*/
-            /*Dictionary<string, object> result = null;
-            using (var fileStream = new FileStream(Path.Combine(uploads, file.FileName), FileMode.Create))
-            {
-                var task = file.CopyToAsync(fileStream);
-                task.Wait();
-                result = new Dictionary<string, object>
-                        {
-                            { "resourceType", "Files" },
-                            { "currentFolder", new Dictionary<string, object>
-                                {
-                                    { "path", "/"},
-                                    { "url", "/assets/"},
-                                    { "acl", 255}
-                                }
-                            },
-                            { "fileName", file.FileName },
-                            { "uploaded", 1 }
-                        };
-            }*/
 
             try
             {
