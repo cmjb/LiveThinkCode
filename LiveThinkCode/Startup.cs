@@ -48,8 +48,8 @@ namespace LiveThinkCode
 
             services.AddAuthentication().AddGitHub(options =>
             {
-                options.ClientId = "d5b76e574476f31087e1";
-                options.ClientSecret = "94572368c44f72679a11df047a97d7219e4a57c4";
+                options.ClientId = "";
+                options.ClientSecret = "";
             });
         }
 
