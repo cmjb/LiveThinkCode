@@ -51,6 +51,7 @@ namespace LiveThinkCode
             {
                 options.ClientId = clientId ?? throw new InvalidOperationException();
                 options.ClientSecret = clientSecret ?? throw new InvalidOperationException();
+
             });
         }
 
