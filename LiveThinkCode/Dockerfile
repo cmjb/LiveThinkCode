@@ -18,5 +18,7 @@ RUN dotnet publish "LiveThinkCode.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
+ENV GithubClientID ""
+ENV GithubClientSecret ""
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "LiveThinkCode.dll"]
