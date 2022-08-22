@@ -45,11 +45,13 @@ namespace LiveThinkCode
             //services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
              //   .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
-
+            var clientId = Environment.GetEnvironmentVariable("GithubClientID");
+            var clientSecret = Environment.GetEnvironmentVariable("GithubClientSecret");
             services.AddAuthentication().AddGitHub(options =>
             {
-                options.ClientId = "";
-                options.ClientSecret = "";
+                options.ClientId = clientId ?? throw new InvalidOperationException();
+                options.ClientSecret = clientSecret ?? throw new InvalidOperationException();
+
             });
         }
 
