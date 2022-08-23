@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace LiveThinkCode
 {
@@ -78,7 +79,11 @@ namespace LiveThinkCode
 
             app.UseAuthentication();
             app.UseAuthorization();
-
+            app.UseCookiePolicy(new CookiePolicyOptions()
+            {
+                MinimumSameSitePolicy = SameSiteMode.Lax,
+                Secure = CookieSecurePolicy.Always,
+            });
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
