@@ -28,9 +28,11 @@ namespace LiveThinkCode
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            
+            var databaseConnectionString = Environment.GetEnvironmentVariable("DBConnectionString");
             services.AddDbContext<ApplicationDbContext>(options =>
                options.UseMySql(
-                    Configuration.GetConnectionString("DefaultConnection"), new MySqlServerVersion(new System.Version(8, 0, 21))));
+                   databaseConnectionString ?? throw new InvalidOperationException(), new MySqlServerVersion(new System.Version(8, 0, 21))));
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
